@@ -79,15 +79,21 @@ function Main() : void{
 
     //initialize with one dependency
     let c = new Car(emotor);
+    console.log(c.GetMotor().GetStatus());
     c.GoFaster();
+    console.log(c.GetMotor().GetStatus());
     c.GoFaster();
+    console.log(c.GetMotor().GetStatus());
     c.GoSlower();
     console.log(c.GetMotor().GetStatus());
 
     //insert another dependency
     c.SetMotor(pmotor);
+    console.log(c.GetMotor().GetStatus());
     c.GoFaster();
+    console.log(c.GetMotor().GetStatus());
     c.GoFaster();
+    console.log(c.GetMotor().GetStatus());
     c.GoSlower();
     console.log(c.GetMotor().GetStatus());
 }
