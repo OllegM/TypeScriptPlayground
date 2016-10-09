@@ -39,7 +39,7 @@ class InternalCombustionMotor implements IMotor {
     }
 
     GetStatus(): string {
-        return "Internal Combustion Motor goes at " + this._revs + " with voltage: " + this._drossel;
+        return "Internal Combustion Motor goes at " + this._revs + " with drossel: " + this._drossel;
     }
 }
 
