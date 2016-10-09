@@ -4,18 +4,28 @@ interface IMotor {
     GetStatus(): string;
 }
 
-/**
- * Motor
- */
-class ElectricMotor implements IMotor {
+abstract class Motor implements IMotor {
     _revs: number = 0;
-    _voltage: number = 0;
     SetRev(revs) {
         this._revs += revs;
         if (this._revs < 0)
         {
             this._revs = 0;
         }
+    }
+    GetStatus() {
+        return "";
+    }
+}
+
+/**
+ * Motor
+ */
+class ElectricMotor extends Motor implements IMotor {
+    _revs: number = 0;
+    _voltage: number = 0;
+    SetRev(revs) {
+        super.SetRev(revs);
         this._voltage = this._revs * 5;
     }
     GetStatus() {
@@ -26,15 +36,11 @@ class ElectricMotor implements IMotor {
 /**
  * Motor
  */
-class InternalCombustionMotor implements IMotor {
+class InternalCombustionMotor extends Motor implements IMotor {
     _revs: number = 0;
     _drossel: number = 0;
     SetRev(revs) {
-        this._revs += revs;
-        if (this._revs < 0)
-        {
-            this._revs = 0;
-        }
+        super.SetRev(revs);
         this._drossel = this._revs * 10;
     }
 
@@ -56,6 +62,7 @@ class Car {
     public SetMotor(motor: IMotor){
         this._motor = motor;
     }
+
     public GetMotor(): IMotor{
         return this._motor;
     }
