@@ -1,15 +1,32 @@
 interface IMotor {
     _revs: number;
-    SetRev(revs:number);
+    SetRev(revs: number);
     GetStatus(): string;
+}
+
+//interface is not used. Logger classes are used.
+interface ILogger {
+    LogMessage(message: string);
+}
+
+class ConsoleLogger implements ILogger {
+    LogMessage(message: string) {
+        console.log(message);
+    }
+}
+
+class HttpLogger implements ILogger {
+    LogMessage(message: string) {
+        //$("#result").append("<p>" + message);
+        console.log("<p>" + message);       
+    }
 }
 
 abstract class Motor implements IMotor {
     _revs: number = 0;
     SetRev(revs) {
         this._revs += revs;
-        if (this._revs < 0)
-        {
+        if (this._revs < 0) {
             this._revs = 0;
         }
     }
@@ -54,55 +71,65 @@ class InternalCombustionMotor extends Motor implements IMotor {
  */
 class Car {
     private _motor: IMotor;
+    private _loggerMethod: (x: string) => void;
 
-    constructor(motor: IMotor) {
+    constructor(motor: IMotor, loggerMethod: (x: string) => void) {
+        this._motor = motor;
+        this._loggerMethod = loggerMethod;
+    }
+
+    public SetMotor(motor: IMotor) {
         this._motor = motor;
     }
 
-    public SetMotor(motor: IMotor){
-        this._motor = motor;
-    }
-
-    public GetMotor(): IMotor{
+    public GetMotor(): IMotor {
         return this._motor;
     }
 
-    public GoFaster(): void { 
-        this._motor.SetRev(10)
+    public GoFaster(): void {
+        this._motor.SetRev(10);
     }
 
     public GoSlower(): void {
         this._motor.SetRev(-10);
     }
 
-    public GetStatus(): string{
+    public GetStatus(): string {
         return this._motor.GetStatus();
+    }
+
+    public LogStatus(message): void {
+        if (this._loggerMethod) {
+            this._loggerMethod(message);
+        }
     }
 }
 
-function Main() : void{
+(function () {
     let emotor = new ElectricMotor();
     let pmotor = new InternalCombustionMotor();
 
+    //add logging dependency.
+    //let logger = new ConsoleLogger();
+    let logger = new HttpLogger();
+
     //initialize with one dependency
-    let c = new Car(emotor);
-    console.log(c.GetMotor().GetStatus());
+    let c = new Car(emotor, logger.LogMessage);
+    c.LogStatus(c.GetStatus());
     c.GoFaster();
-    console.log(c.GetMotor().GetStatus());
+    c.LogStatus(c.GetStatus());
     c.GoFaster();
-    console.log(c.GetMotor().GetStatus());
+    c.LogStatus(c.GetStatus());
     c.GoSlower();
-    console.log(c.GetMotor().GetStatus());
+    c.LogStatus(c.GetStatus());
 
     //insert another dependency
     c.SetMotor(pmotor);
-    console.log(c.GetMotor().GetStatus());
+    c.LogStatus(c.GetStatus());
     c.GoFaster();
-    console.log(c.GetMotor().GetStatus());
+    c.LogStatus(c.GetStatus());
     c.GoFaster();
-    console.log(c.GetMotor().GetStatus());
+    c.LogStatus(c.GetStatus());
     c.GoSlower();
-    console.log(c.GetMotor().GetStatus());
-}
-
-Main();
+    c.LogStatus(c.GetStatus());
+} ());
